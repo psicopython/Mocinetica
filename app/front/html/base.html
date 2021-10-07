@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title or "TechnoAR" }}</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/style.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/brands.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cars.css') }}">
+
+</head>
+<body>
+
+    <header id="header">
+        <div id="header-title">
+            <h1><a href="/">TechnoAR</a></h1>
+            <span id="header-dir">Home</span>
+        </div>
+        <div id="header-links">
+            <ul>
+                {% if g.user -%}
+                <li id="btnSetCar" onclick="toggle('setCar'); getListOfBrands()">Adicionar Carro</li>
+                <li id="btnSetBrand" onclick="toggle('setBrand')" >Adicionar Montadora</li>
+                <li onclick="logout()" >Logout</li>
+                {% else %}
+                <li onclick="toggle('login')" >Login</li>
+                {%- endif %}
+            </ul>
+        </div>
+    </header>
+
+    <section >
+        <div id="content">
+            <div id="listBrands"></div>
+            <div id="listCars"></div>
+            <div id="carOpt"></div>
+        </div>
+        
+        {% if g.user -%}
+        <div id="setBrand" style="display:none;">
+            <h1>Adicionar Montadora</h1>
+            <form class="form" id="setBrand-form">
+                <label for="name">Nome da Montadora</label>
+                <input type="text" name="name" id="setBrand-name" placeholder="Nome da Montadora" >
+ 
+                <button onclick="setBrand">Salvar</button>
+            </form>
+            <div class="alertArea"></div>
+        </div>
+        
+        <div id="setCar" style="display:none;">
+            <h1>Adicionar Carro</h1>
+
+            <form class="form" id="setCar-form">
+                <label for="name">Nome do Carro</label>
+                <input type="text" name="name" id="setCar-name" placeholder="Nome do carro" >
+                
+                <label for="year">Ano de Fabricação</label>
+                <input type="text" name="year" id="setCar-year" placeholder="Ano de Fabricação" >
+                
+                <label for="engine">Motor</label>
+                <input type="text" name="engine" id="setCar-engine" placeholder="Motor do carro" >
+                
+                <label for="setCar-Selectbrand">Nome da Montadora</label>
+                <select name="brand" id="setCar-Selectbrand" >
+                    <option value="">Nome da Montadora</option>
+                </select>
+                
+                <label for="gas_charge">Quantidade de gas</label>
+                <input type="text" name="gas_charge" id="setCar-gasCharge" placeholder="Quantidade de gas" >
+    
+                <button onclick="setCar">Salvar</button>
+            </form>
+            <div class="alertArea"></div>
+    
+        </div>
+        {%- endif %}
+    </section>
+    <div id="car" style="display:none;"></div>
+
+    {% if not g.user %}
+    <div id="login" style="display: none;">
+        <form class="form" id="login-form">
+            <p class="btn-close" onclick="document.getElementById('login').style.display='none'" title="fechar">X</p>
+            <div id="msgArea" style=" margin:50px"></div>
+            <input id="login-form-user"     type="email"    name="user"     placeholder="Usuário">
+            <input id="login-form-password" type="password" name="password" placeholder="Senha"  >
+            <button >Entrar</button>
+        </form>
+    </div>
+    {% endif %}
+
+    <script src="{{ url_for('static', filename='js/axios.js',_external=True) }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js',_external=True) }}"></script>
+    <script src="{{ url_for('static', filename='js/getBrands.js',_external=True) }}"></script>
+    <script src="{{ url_for('static', filename='js/getCars.js',_external=True) }}"></script>
+    {% if g.user -%}
+    <script src="{{ url_for('static', filename='js/admFuncs.js',_external=True) }}"></script>
+    {%- endif %}
+
+    {% if brand and carName -%}
+    <script>
+        getCarByName('{{brand}}', '{{carName}}', false)
+    </script>
+
+    {% elif brand -%}
+    <script>
+        listCars('{{ brand }}', true)
+    </script>
+
+    {% else %}
+    <script>
+        listBrands()
+    </script>
+    {%- endif %}
+
+</body>
+</html>
